@@ -1,0 +1,94 @@
+#root {
+  max-width: 100%;
+  margin: 0 auto;
+  padding: 0;
+  text-align: center;
+  min-height: 100vh;
+}
+
+/* Responsive utilities */
+@media (max-width: 640px) {
+  body {
+    font-size: 14px;
+  }
+}
+
+@media (max-width: 480px) {
+  body {
+    font-size: 12px;
+  }
+}
+
+/* LANDSCAPE MODE OPTIMIZATION */
+@media (orientation: landscape) {
+  #root {
+    min-height: 100vh;
+    overflow-y: auto;
+  }
+  
+  body {
+    overflow: hidden;
+  }
+}
+
+/* Touch optimization */
+@media (hover: none) {
+  button {
+    padding: 12px !important;
+    font-size: 16px !important;
+  }
+  
+  div[onclick] {
+    min-height: 44px;
+    min-width: 44px;
+  }
+}
+
+/* Landscape specific adjustments */
+@supports (orientation: landscape) {
+  @media (orientation: landscape) and (max-height: 600px) {
+    /* Compact mode for small landscape screens */
+    .landscape\:p-2 { padding: 0.5rem; }
+    .landscape\:h-screen { height: 100vh; }
+    .landscape\:overflow-auto { overflow: auto; }
+    .landscape\:mb-2 { margin-bottom: 0.5rem; }
+    .landscape\:gap-0\.5 { gap: 0.125rem; }
+    .landscape\:scale-90 { transform: scale(0.9); }
+    .landscape\:text-xs { font-size: 0.75rem; }
+    .landscape\:text-2xl { font-size: 1.5rem; }
+    .landscape\:w-16 { width: 4rem; }
+    .landscape\:h-32 { height: 8rem; }
+    .landscape\:w-14 { width: 3.5rem; }
+    .landscape\:h-14 { height: 3.5rem; }
+    .landscape\:rounded-2xl { border-radius: 1rem; }
+    .landscape\:max-h-\[70vh\] { max-height: 70vh; }
+    .landscape\:gap-1\.5 { gap: 0.375rem; }
+    .landscape\:origin-left { transform-origin: 0 0; }
+    .landscape\:origin-right { transform-origin: 100% 0; }
+  }
+}
+
+
+
+@keyframes logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  a:nth-of-type(2) .logo {
+    animation: logo-spin infinite 20s linear;
+  }
+}
+
+.card {
+  padding: 2em;
+}
+
+.read-the-docs {
+  color: #888;
+}

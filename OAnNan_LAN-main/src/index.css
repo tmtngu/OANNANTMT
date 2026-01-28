@@ -1,0 +1,34 @@
+
+
+/* ===== Global Reset ===== */
+html,
+body,
+#root {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+/* ===== Game Theme ===== */
+body {
+  background: radial-gradient(circle at center, #1f2933, #020617);
+  color: #e5e7eb;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+    Roboto, Ubuntu, Cantarell, "Helvetica Neue", Arial, "Noto Sans",
+    "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol",
+    "Noto Color Emoji";
+  overflow: hidden;
+}
+
+/* ===== Disable text select for board game ===== */
+* {
+  user-select: none;
+}
+
+/* ===== Button animation helper ===== */
+.btn-press {
+  transition: transform 0.08s ease, box-shadow 0.08s ease;
+}
+.btn-press:active {
+  transform: scale(0.96);
+}
