@@ -104,62 +104,48 @@ export default function App() {
   }, []);
 
   const handleVetKho = useCallback((isP1Turn: boolean, currentBoard: number[], currentScores: any) => {
-    const startIdx = isP1Turn ? 0 : 6;
-    const endIdx = isP1Turn ? 4 : 10;
-    const sideSum = currentBoard.slice(startIdx, endIdx + 1).reduce((a, b) => a + b, 0);
+    const startIdx = isP1Turn ? 0 : 6;
+    const endIdx = isP1Turn ? 4 : 10;
+    
+    // Kiểm tra xem 5 ô dân bên phía người chơi có trống không
+    const sideSum = currentBoard.slice(startIdx, endIdx + 1).reduce((a, b) => a + b, 0);
 
-    if (sideSum === 0) {
-        const newBoard = [...currentBoard];
-        const newScores = { ...currentScores };
-        const playerKey = isP1Turn ? 'p1' : 'p2' as const;
+    if (sideSum === 0) {
+      const newBoard = [...currentBoard];
+      const newScores = { ...currentScores };
+      const playerKey = isP1Turn ? 'p1' : 'p2' as const;
 
-        if (newScores[playerKey] >= 5) {
-            newScores[playerKey] -= 5;
-            for (let i = startIdx; i <= endIdx; i++) {
-                newBoard[i] = 1;
-            }
-            return { newBoard, newScores, status: 'spread' };
-        }
-        return { newBoard, newScores, status: 'gameover' };
-    }
-    return { newBoard: currentBoard, newScores: currentScores, status: 'ok' };
-}, []);
+      // Nếu còn đủ 5 điểm thì rải quân tiếp
+      if (newScores[playerKey] >= 5) {
+        newScores[playerKey] -= 5;
+        for (let i = startIdx; i <= endIdx; i++) {
+          newBoard[i] = 1;
+        }
+        
+        setBoard(newBoard);
+        setScores(newScores);
+        
+        // Gửi lệnh đồng bộ sang máy đối phương
+        broadcastSync(newBoard, newScores, isP1Turn, null);
+        console.log(`Người chơi ${playerKey} đã tự động rải 5 quân (Vét kho).`);
+      } else {
+        // Không đủ điểm rải quân thì kết thúc trận đấu
+        handleEndGame();
+      }
+    }
+  }, [broadcastSync, setBoard, setScores, handleEndGame]);
   /* ---------- GAME ENGINE CORE ---------- */
-  const executeMove = useCallback(async (index: number, direction: 'LEFT' | 'RIGHT', isRemote: boolean = false) => {
-    // 1. Chặn lượt (Giữ nguyên đoạn if (!isRemote) cũ)
-    if (!isRemote) {
-        if (stateRef.current.gameOver) return;
-        if (role === 'p1' && !stateRef.current.isP1Turn) return;
-        if (role === 'p2' && stateRef.current.isP1Turn) return;
-    }
+  const executeMove = useCallback(async (index: number, direction: 'LEFT' | 'RIGHT') => {
+    if (stateRef.current.gameOver || stateRef.current.skipNextTurn) return;
 
-    let newBoard = [...stateRef.current.board];
-    let newScores = { ...stateRef.current.scores };
+    const newBoard = [...stateRef.current.board];
+    const newScores = { ...stateRef.current.scores };
+    
+    let cur = index;
+    let stones = newBoard[cur];
+    newBoard[cur] = 0;
+    setBoard([...newBoard]);
 
-    // 2. KIỂM TRA VÉT KHO NGAY TẠI ĐÂY (TRƯỚC KHI BỐC QUÂN)
-    // Gọi hàm handleVetKho đã khai báo ở dòng 106 bên ngoài
-    const checkVet = handleVetKho(stateRef.current.isP1Turn, newBoard, newScores);
-
-    if (checkVet.status === 'gameover') {
-        setGameOver(true);
-        return;
-    } else if (checkVet.status === 'spread') {
-        newBoard = checkVet.newBoard;
-        newScores = checkVet.newScores;
-        setBoard([...newBoard]);
-        setScores({ ...newScores });
-        await delay(500); // Chờ một chút để thấy sỏi hiện ra
-    }
-
-    // 3. BẮT ĐẦU BỐC QUÂN ĐỂ RẢI
-    let cur = index;
-    let stones = newBoard[cur]; 
-    if (stones === 0) return; // Bảo hiểm: Nếu ô vẫn trống thì không rải
-
-    newBoard[cur] = 0;
-    setBoard([...newBoard]);
-
-    // ... Tiếp tục các vòng lặp while (stones > 0) phía dưới ...
     // VÒNG LẶP LIÊN HOÀN: Rải hết bốc tiếp
     while (stones > 0) {
       // 1. Rải số quân đang có trên tay
