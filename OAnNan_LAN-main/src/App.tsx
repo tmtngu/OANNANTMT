@@ -207,23 +207,40 @@ export default function App() {
       }
     }
 
-    // KẾT THÚC LƯỢT & KIỂM TRA THẺ BÀI
-    let card: GameCard | null = null;
-    // (Giữ nguyên logic card và đổi lượt của bạn ở đây...)
-    let nextTurn = !stateRef.current.isP1Turn;
-    if (skipNextTurn) {
-      setSkipNextTurn(false);
-      nextTurn = !nextTurn;
-    }
-    setIsP1Turn(nextTurn);
+   // KẾT THÚC LƯỢT & KIỂM TRA BỐC BÀI
+    let card: GameCard | null = null;
+    
+    // Kiểm tra xem vị trí kết thúc (cur) có nằm trong 5 ô dân của đối phương không
+    const isEndingInOpponentSide = isP1Turn 
+      ? (cur >= 6 && cur <= 10) // P1 đi, kết thúc ở ô 6-10 (dân P2)
+      : (cur >= 0 && cur <= 4);  // P2 đi, kết thúc ở ô 0-4 (dân P1)
 
-    if (newBoard[5] === 0 && newBoard[11] === 0) {
-      setGameOver(true);
-      broadcastSync(newBoard, newScores, nextTurn, null, true);
-    } else {
-      broadcastSync(newBoard, newScores, nextTurn, null, false, false);
-    }
-  }, [broadcastSync, skipNextTurn]);
+    if (isEndingInOpponentSide) {
+      card = getRandomCard(); // Sử dụng hàm để mất chữ vàng
+      setCurrentCard(card);
+      console.log("Kết thúc ở sân đối phương! Được bốc bài.");
+    }
+
+    // XỬ LÝ CHUYỂN LƯỢT
+    let nextTurn = !stateRef.current.isP1Turn;
+    if (skipNextTurn) {
+      setSkipNextTurn(false);
+      nextTurn = !nextTurn;
+    }
+    setIsP1Turn(nextTurn);
+
+    // KÍCH HOẠT VÉT KHO (Dùng hàm handleVetKho để mất chữ vàng)
+    // Kiểm tra xem người chơi tiếp theo có quân để đi không
+    handleVetKho(nextTurn, newBoard, newScores);
+
+    // ĐỒNG BỘ LÊN GITHUB/VERCEL
+    if (newBoard[5] === 0 && newBoard[11] === 0) {
+      setGameOver(true);
+      broadcastSync(newBoard, newScores, nextTurn, card, true);
+    } else {
+      broadcastSync(newBoard, newScores, nextTurn, card, false, false);
+    }
+  }, [broadcastSync, skipNextTurn, handleVetKho]); // Nhớ thêm handleVetKho vào mảng này
 
   /* ---------- NETWORK LISTENERS ---------- */
   const setupDataListener = useCallback((c: DataConnection) => {
