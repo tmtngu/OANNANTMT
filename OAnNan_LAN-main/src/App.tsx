@@ -13,7 +13,6 @@ import Instructions from './components/Instructions';
 const delay = (ms: number) => new Promise(res => setTimeout(res, ms));
 
 const AVATARS = [
-  "https://api.dicebear.com/7.x/avataaars/svg?seed=Felix",
   "https://api.dicebear.com/7.x/avataaars/svg?seed=Aneka",
   "https://api.dicebear.com/7.x/avataaars/svg?seed=mimi",
   "https://api.dicebear.com/7.x/avataaars/svg?seed=Oliver",
@@ -52,6 +51,9 @@ interface SyncData {
 export default function App() {
   const [userName, setUserName] = useState('');
   const [userAvatar, setUserAvatar] = useState(AVATARS[0]);
+  const [isAiMode, setIsAiMode] = useState(false);
+  const [aiDifficulty, setAiDifficulty] = useState<'EASY' | 'MEDIUM' | 'HARD' | 'IMPOSSIBLE'>('EASY');
+  const [isAiProcessing, setIsAiProcessing] = useState(false);
   const [isJoined, setIsJoined] = useState(false);
   const [oppInfo, setOppInfo] = useState({ name: 'Đang chờ...', avatar: AVATARS[0] });
 
@@ -342,6 +344,94 @@ export default function App() {
     
     setSelectingIndex(null);
   };
+  // --- HÀM GIẢ LẬP ĐỂ AI TÍNH ĐIỂM ---
+  const simulateScore = (index: number, direction: 'LEFT' | 'RIGHT', currentBoard: number[]) => {
+    let tempBoard = [...currentBoard];
+    let cur = index;
+    let stones = tempBoard[cur];
+    tempBoard[cur] = 0;
+    let captured = 0;
+    while (stones > 0) {
+      while (stones > 0) {
+        cur = direction === 'RIGHT' ? (cur + 1) % 12 : (cur - 1 + 12) % 12;
+        stones--;
+        tempBoard[cur]++;
+      }
+      let nextIdx = direction === 'RIGHT' ? (cur + 1) % 12 : (cur - 1 + 12) % 12;
+      if (tempBoard[nextIdx] > 0 && nextIdx !== 5 && nextIdx !== 11) {
+        stones = tempBoard[nextIdx];
+        tempBoard[nextIdx] = 0;
+      } else break;
+    }
+    let canCapture = true;
+    while (canCapture) {
+      const next = direction === 'RIGHT' ? (cur + 1) % 12 : (cur - 1 + 12) % 12;
+      const after = direction === 'RIGHT' ? (next + 1) % 12 : (next - 1 + 12) % 12;
+      if (tempBoard[next] === 0 && tempBoard[after] > 0) {
+        captured += tempBoard[after];
+        tempBoard[after] = 0;
+        cur = after;
+      } else canCapture = false;
+    }
+    return captured;
+  };
+
+  // --- LOGIC AI PHÂN CẤP ĐỘ (BẢN SỬA LỖI RẢI LIÊN TỤC) ---
+  useEffect(() => {
+    // Chỉ chạy nếu: Chế độ AI bật, lượt P2, game chưa xong và AI KHÔNG trong quá trình xử lý
+    if (isAiMode && !isP1Turn && !gameOver && !isAiProcessing) {
+      const aiAction = async () => {
+        setIsAiProcessing(true); // KHÓA AI LẠI
+        
+        await delay(1500);
+        // Kiểm tra lại lần nữa để tránh lỗi race condition
+        if (isP1Turn || gameOver) {
+          setIsAiProcessing(false);
+          return;
+        }
+
+        const validCells = [6, 7, 8, 9, 10].filter(i => stateRef.current.board[i] > 0);
+        if (validCells.length === 0) {
+          setIsAiProcessing(false);
+          return;
+        }
+
+        let chosenIndex: number;
+        let chosenDir: 'LEFT' | 'RIGHT';
+
+        if (aiDifficulty === 'EASY') {
+          chosenIndex = validCells[Math.floor(Math.random() * validCells.length)];
+          chosenDir = Math.random() > 0.5 ? 'LEFT' : 'RIGHT';
+        } else {
+          let moves: {i: number, d: 'LEFT'|'RIGHT', s: number}[] = [];
+          validCells.forEach(i => {
+            moves.push({ i, d: 'LEFT', s: simulateScore(i, 'LEFT', stateRef.current.board) });
+            moves.push({ i, d: 'RIGHT', s: simulateScore(i, 'RIGHT', stateRef.current.board) });
+          });
+          moves.sort((a, b) => b.s - a.s);
+          
+          if (aiDifficulty === 'MEDIUM' && Math.random() > 0.7) {
+             chosenIndex = validCells[Math.floor(Math.random() * validCells.length)];
+             chosenDir = Math.random() > 0.5 ? 'LEFT' : 'RIGHT';
+          } else {
+             chosenIndex = moves[0].i;
+             chosenDir = moves[0].d;
+          }
+        }
+
+        setSelectingIndex(chosenIndex);
+        await delay(800);
+        
+        // Thực hiện nước đi thực tế
+        await executeMove(chosenIndex, chosenDir);
+        
+        setSelectingIndex(null);
+        setIsAiProcessing(false); // MỞ KHÓA AI CHO LƯỢT SAU
+      };
+
+      aiAction();
+    }
+  }, [isP1Turn, isAiMode, gameOver, aiDifficulty]); // XÓA 'board' khỏi đây để tránh lặp vô hạn
   /* ---------- UI RENDER ---------- */
   if (!isJoined) {
     return (
@@ -367,7 +457,31 @@ export default function App() {
             onChange={(e) => setUserName(e.target.value)} 
             onKeyDown={(e) => e.key === 'Enter' && userName && setIsJoined(true)}
           />
-          
+          {/* CỤM CHỌN ĐỘ KHÓ VÀ CHƠI VỚI MÁY */}
+          <div className="flex justify-between gap-1 mb-2">
+            {[
+              {id:'EASY', n:'Dễ'}, {id:'MEDIUM', n:'Vừa'}, 
+              {id:'HARD', n:'Khó'}, {id:'IMPOSSIBLE', n:'Bất Bại'}
+            ].map(l => (
+              <button key={l.id} onClick={() => setAiDifficulty(l.id as any)}
+                className={`flex-1 py-2 rounded-xl text-[10px] font-bold border-2 transition-all ${aiDifficulty === l.id ? 'bg-amber-600 text-white border-amber-900' : 'bg-white text-gray-400 border-gray-100'}`}>
+                {l.n}
+              </button>
+            ))}
+          </div>
+
+          <button 
+            onClick={() => {
+              setUserName(userName || 'Người chơi');
+              setIsAiMode(true);
+              setIsJoined(true);
+              setRole('p1');
+              setOppInfo({ name: aiDifficulty === 'IMPOSSIBLE' ? 'Siri Pro Max' : 'Máy Tính', avatar: AVATARS[2] });
+            }} 
+            className="w-full bg-emerald-600 text-white py-3 sm:py-4 rounded-2xl font-black mb-2 active:scale-95 transition-all"
+          >
+            🎮 CHƠI VỚI MÁY ({aiDifficulty})
+          </button>
           <button 
             onClick={() => { if(userName) setIsJoined(true) }} 
             className="w-full bg-amber-800 text-white py-3 sm:py-4 lg:py-6 rounded-2xl lg:rounded-3xl font-black mb-2 sm:mb-3 lg:mb-4 active:scale-95 transition-all text-sm sm:text-base lg:text-lg"
