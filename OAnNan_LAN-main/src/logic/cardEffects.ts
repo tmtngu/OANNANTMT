@@ -14,36 +14,36 @@ export const applyCardEffect = (card: GameCard, state: GameState) => {
   const opponent: 'p1' | 'p2' = state.isP1Turn ? 'p2' : 'p1';
 
   switch (card.id) {
-    case 1: { // NGON THÍIII - Ô cuối X2 nếu ăn được
+    case 1: { // Ngon Thíiii - Ô cuối X2 nếu ăn được
       // Logic này được xử lý trong executeMove (khi ăn)
       // Card chỉ có tác dụng nếu người chơi ăn được ở lượt đó
-      console.log('Card NGON THÍIII được bốc - xử lý trong executeMove');
+      console.log('Card Ngon Thíiii được bốc - xử lý trong executeMove');
       break;
     }
 
-    case 2: { // PHÁ LÀNG PHÁ XÓM
+    case 2: { // Hồng Nhan Bạc Phận
       newScores[currentPlayer] = Math.max(0, newScores[currentPlayer] - 4);
       break;
     }
 
-    case 3: { // THÊM LƯỢT
+    case 3: { // Còn Gì Đẹp Hơn
       // Logic này cần được xử lý ở App.tsx (không chuyển lượt)
-      console.log('Card THÊM LƯỢT - skip turn change');
+      console.log('Card Còn Gì Đẹp Hơn - skip turn change');
       break;
     }
 
-    case 4: { // CHĂM HỌC HÀNH
+    case 4: { // Vì Em Xứng Đáng!!!
       newScores[currentPlayer] += 2;
       break;
     }
 
-    case 5: { // MẤT LƯỢT
+    case 5: { // Xa Cà Nu
       // Logic này xử lý ở App.tsx (skip next turn)
-      console.log('Card MẤT LƯỢT - apply at next turn');
+      console.log('Card Xa Cà Nu - apply at next turn');
       break;
     }
 
-    case 6: { // RẢI ĐỀU 5 ĐÁ
+    case 6: { // Rụng Đá
       const totalOppScore = newScores[opponent];
 
       if (totalOppScore >= 9) {
@@ -64,22 +64,41 @@ export const applyCardEffect = (card: GameCard, state: GameState) => {
       break;
     }
 
-    case 7: { // HỒI QUAN - Lấy Quan của đối phương nếu đã ăn
-      const targetQuan = state.isP1Turn ? 5 : 11;
+  case 7: { // Cướp Quan
+    const opponent = state.isP1Turn ? 'p2' : 'p1';
+    const self = state.isP1Turn ? 'p1' : 'p2';
+  
+    // Giả sử mỗi Quan (Quan ăn được) có giá trị là 10 điểm trong logic của bạn
+    const diemCua1Quan = 10; 
 
-      if (newBoard[targetQuan] === 0 && newScores[opponent] >= 10) {
-        newBoard[targetQuan] = 1;
-        newScores[opponent] -= 10;
-      }
-      break;
+    if (newScores[opponent] >= diemCua1Quan) {
+      // Trường hợp đối thủ đã ăn ít nhất 1 Quan
+      // Kiểm tra xem đối thủ ăn 1 hay 2 Quan (Dựa trên điểm số chia hết cho 10)
+      let soQuanCuopDuoc = Math.floor(newScores[opponent] / diemCua1Quan);
+    
+      // Giới hạn tối đa là 2 Quan theo luật lá bài
+      if (soQuanCuopDuoc > 2) soQuanCuopDuoc = 2;
+
+      const tongDiemCuop = soQuanCuopDuoc * diemCua1Quan;
+
+      newScores[opponent] -= tongDiemCuop;
+      newScores[self] += tongDiemCuop;
+    
+      console.log(`Đã cướp ${soQuanCuopDuoc} Quan!`);
+    } else {
+      // Trường hợp đối thủ chưa ăn Quan: -5 điểm của bản thân
+      newScores[self] -= 5;
+      console.log("Đối thủ chưa có Quan, bạn bị -5 điểm.");
     }
+    break;
+  }
 
-    case 8: { // LƯỜI HỌC HÀNH
+    case 8: { // Em Bị Trừ 3 Điểm Thanh Lịch
       newScores[currentPlayer] = Math.max(0, newScores[currentPlayer] - 3);
       break;
     }
 
-    case 9: { // NGHÈO VƯỢT KHÓ
+    case 9: { // Phiếu Bé Ngoan
       newScores[currentPlayer] += 5;
       break;
     }
@@ -90,40 +109,33 @@ export const applyCardEffect = (card: GameCard, state: GameState) => {
       break;
     }
 
-    case 11: { // THI TRẠNG NGUYÊN
-      // Thực tế nên show câu hỏi nhưng giờ random 50%
-      const isCorrect = Math.random() > 0.5;
-      newScores[currentPlayer] += isCorrect ? 3 : -3;
-      newScores[currentPlayer] = Math.max(0, newScores[currentPlayer]);
-      break;
-    }
-
-    case 12: { // ÔI THÔI CHỚTTT - Bẫy trừ 5 điểm
+    case 11: { // Ôi Thôi Chớttt - Bẫy trừ 5 điểm
       // Xử lý khi đối phương bốc vào ô này
-      console.log('Card ÔI THÔI CHỚTTT - trap activated');
+      console.log('Card Ôi Thôi CHớttt - trap activated');
       break;
     }
 
-    case 13: { // MÀI CHỚT CHƯA CON - Bẫy trừ 3 điểm
+    case 12: { // Mài Chớt Chưa Con - Bẫy trừ 3 điểm
       // Xử lý khi đối phương bốc vào ô này
-      console.log('Card MÀI CHỚT CHƯA CON - trap activated');
+      console.log('Card Mài Chớt Chưa Con - trap activated');
       break;
     }
 
-    case 14: { // CÂU HỎI ĐẲNG CẤP
+    case 13: { // Cơ Hội Lật Kèo
       // Đúng nhận Lật Kèo, Sai trừ 10
       const isCorrect = Math.random() > 0.5;
       if (isCorrect) {
         // Nhận thẻ Lật Kèo (xử lý bên ngoài)
-        console.log('Card CÂU HỎI ĐẲNG CẤP - Đúng! Nhận Lật Kèo');
+        console.log('Card Cơ Hội Lật Kèo - Đúng! Thì xử lí như Lá Còn Gì Đẹp Hơn nhưng là 3 lượt');
       } else {
         newScores[currentPlayer] = Math.max(0, newScores[currentPlayer] - 10);
-        console.log('Card CÂU HỎI ĐẲNG CẤP - Sai! Trừ 10 điểm');
+        console.log('Card Cơ Hội Lật Kèo - Sai! Trừ 10 điểm');
       }
       break;
     }
 
-    case 15: { // LẬT KÈO
+    case 14: { // Được Ăn Cả Ngã Thì Thua
+      // Đúng ra phải thêm hiệu ứng tung xúc xắc ở App.txs
       const rolls = Array.from({ length: 3 }, () =>
         Math.floor(Math.random() * 6) + 1
       );
@@ -134,20 +146,20 @@ export const applyCardEffect = (card: GameCard, state: GameState) => {
         const temp = newScores.p1;
         newScores.p1 = newScores.p2;
         newScores.p2 = temp;
-        console.log(`Card LẬT KÈO - Tổng: ${total} > 11, đổi kho điểm!`);
+        console.log(`Card Được Ăn Cả Ngã Thì Thua - Tổng: ${total} > 10, đổi kho điểm!`);
       } else {
-        console.log(`Card LẬT KÈO - Tổng: ${total} ≤ 11, không được gì`);
+        console.log(`Card Được Ăn Cả Ngã Thì Thua - Tổng: ${total} ≤ 10, không được gì`);
       }
       break;
     }
 
-    case 16: { // ĐẬU TÚ TÀI
+    case 15: { // Nước Đi Hay Đấy
       // Cho phép chọn rải 5 đá vào 5 ô (xử lý UI)
-      console.log('Card ĐẬU TÚ TÀI - player choose 5 slots to place');
+      console.log('Card Nước Đi Hay Đấy - player choose 5 slots to place');
       break;
     }
 
-    case 17: { // STOP
+    case 16: { // Dừng Cái Tay Hư Lại
       // Dừng tác dụng thẻ đối phương
       console.log('Card STOP - cancel opponent card effect');
       break;

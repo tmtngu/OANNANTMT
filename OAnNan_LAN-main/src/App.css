@@ -1,3 +1,5 @@
+/*Cấu hình khung gốc*/
+/*Giúp game luôn căn giữa màn hình*/
 #root {
   max-width: 100%;
   margin: 0 auto;
@@ -6,7 +8,7 @@
   min-height: 100vh;
 }
 
-/* Responsive utilities */
+/*Chỉnh theo loại màn hình, để không bị tràn*/
 @media (max-width: 640px) {
   body {
     font-size: 14px;
@@ -19,7 +21,7 @@
   }
 }
 
-/* LANDSCAPE MODE OPTIMIZATION */
+/*Tối ưu hoá xoay ngang điện thoại*/
 @media (orientation: landscape) {
   #root {
     min-height: 100vh;
@@ -31,7 +33,7 @@
   }
 }
 
-/* Touch optimization */
+/*Dành cho màn hình cảm ứng(điện thoại)*/
 @media (hover: none) {
   button {
     padding: 12px !important;
@@ -44,7 +46,7 @@
   }
 }
 
-/* Landscape specific adjustments */
+/*Điều chỉnh cho chuẩn khi xoay ngang*/
 @supports (orientation: landscape) {
   @media (orientation: landscape) and (max-height: 600px) {
     /* Compact mode for small landscape screens */
@@ -92,3 +94,4 @@
 .read-the-docs {
   color: #888;
 }
+/*Nói chung đoạn code này để tương thích các thiết bị với game*/
