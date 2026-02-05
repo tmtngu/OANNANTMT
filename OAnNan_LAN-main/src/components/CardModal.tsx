@@ -12,11 +12,14 @@ const CardModal: React.FC<CardModalProps> = ({ card, onConfirm }) => {
   const isImmediate = card.type === 'IMMEDIATE';
 
   return (
+    /* 1. LỚP NỀN & KHUNG CHỨA */
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-md p-4">
       <div 
-        className="relative w-full max-w-[340px] sm:max-w-[400px]" // Giới hạn chiều rộng modal
+        className="relative w-full max-w-[340px] sm:max-w-[400px]" 
         style={{ perspective: '1000px' }}
       >
+        
+        {/* 2. THÂN THẺ & HIỆU ỨNG */}
         <div
           className={`
             bg-gradient-to-br ${card.color || 'from-slate-700 to-slate-900'}
@@ -30,20 +33,21 @@ const CardModal: React.FC<CardModalProps> = ({ card, onConfirm }) => {
           `}
           onClick={() => setIsFlipped(!isFlipped)}
         >
-          {/* Header - Giữ lại để biết loại thẻ */}
+          
+          {/* 3. TIÊU ĐỀ LOẠI THẺ */}
           <div className="bg-white/20 backdrop-blur p-3 text-center border-b border-white/30">
             <h2 className="text-white text-xs sm:text-sm font-black uppercase tracking-widest">
               {isImmediate ? '⚡ DÙNG NGAY' : '🎁 CÓ THỂ ĐỂ DÀNH'}
             </h2>
           </div>
 
-          {/* Content - Chỉ chứa ảnh tràn viền */}
+          {/* 4. NỘI DUNG HÌNH ẢNH */}
           <div className="relative aspect-[1240/1740] w-full overflow-hidden bg-black/10">
             {card.image ? (
               <img 
                 src={card.image} 
                 alt="Game Card"
-                className="w-full h-full object-cover" // Object-cover để đảm bảo không hở viền
+                className="w-full h-full object-cover" 
               />
             ) : (
               <div className="flex items-center justify-center h-full text-white text-4xl">
@@ -52,7 +56,7 @@ const CardModal: React.FC<CardModalProps> = ({ card, onConfirm }) => {
             )}
           </div>
 
-          {/* Action Area */}
+          {/* 5. NÚT BẤM XÁC NHẬN */}
           <div className="p-4 sm:p-5 bg-black/20 backdrop-blur-sm">
             {onConfirm ? (
               <button
@@ -63,14 +67,10 @@ const CardModal: React.FC<CardModalProps> = ({ card, onConfirm }) => {
                 className="
                   w-full py-3 sm:py-4
                   bg-white text-gray-900
-                  font-black
-                  rounded-xl
-                  hover:bg-gray-100
-                  active:scale-95
-                  transition-all
-                  shadow-lg
-                  uppercase tracking-wider
-                  text-sm
+                  font-black rounded-xl
+                  hover:bg-gray-100 active:scale-95
+                  transition-all shadow-lg
+                  uppercase tracking-wider text-sm
                 "
               >
                 Xác nhận
@@ -85,12 +85,13 @@ const CardModal: React.FC<CardModalProps> = ({ card, onConfirm }) => {
             )}
           </div>
 
-          {/* Footer */}
+          {/* 6. THÔNG TIN CUỐI THẺ */}
           <div className="bg-white/10 p-2 text-center border-t border-white/10">
             <p className="text-[8px] font-black opacity-50 uppercase tracking-widest text-white">
               Bấm để xem lại • 2026
             </p>
           </div>
+          
         </div>
       </div>
     </div>

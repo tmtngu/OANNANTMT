@@ -1,12 +1,12 @@
-/*Nạp thư viện react*/
+/* 1. NẠP CÔNG CỤ LÀM GAME (REACT) */
 import React from 'react'
-/*Đưa các thành phần React hiển thị lên trình duyệt*/
 import ReactDOM from 'react-dom/client'
-/*Nhập thành phần chính của ứng dụng. Mọi logic trò chơi, bàn cờ, và quân cờ*/
+
+/* 2. NHẬP NỘI DUNG GAME VÀ GIAO DIỆN */
 import App from './App.tsx'
-/*Kết nối file CSS (chứa hiệu ứng màu nền và nút bấm*/
 import './index.css'
 
+/* 3. KÍCH HOẠT GAME LÊN MÀN HÌNH */
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
     <App />

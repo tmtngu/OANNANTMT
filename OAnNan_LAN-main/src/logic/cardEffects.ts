@@ -103,7 +103,7 @@ export const applyCardEffect = (card: GameCard, state: GameState) => {
       break;
     }
 
-    case 10: { // ĂN KẾ TIẾP
+    case 10: { // Ăn Bất Chấp
       // Logic này xử lý ở App.tsx (ăn ô tiếp theo nếu đủ điều kiện)
       console.log('Card ĂN KẾ TIẾP - handled in game logic');
       break;

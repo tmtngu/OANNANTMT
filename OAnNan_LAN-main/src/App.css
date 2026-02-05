@@ -1,5 +1,4 @@
-/*Cấu hình khung gốc*/
-/*Giúp game luôn căn giữa màn hình*/
+/* 1. CẤU HÌNH KHUNG GỐC */
 #root {
   max-width: 100%;
   margin: 0 auto;
@@ -8,7 +7,7 @@
   min-height: 100vh;
 }
 
-/*Chỉnh theo loại màn hình, để không bị tràn*/
+/* 2. ĐIỀU CHỈNH CHỮ THEO ĐỘ RỘNG MÀN HÌNH */
 @media (max-width: 640px) {
   body {
     font-size: 14px;
@@ -21,7 +20,7 @@
   }
 }
 
-/*Tối ưu hoá xoay ngang điện thoại*/
+/* 3. TỐI ƯU KHI XOAY NGANG ĐIỆN THOẠI */
 @media (orientation: landscape) {
   #root {
     min-height: 100vh;
@@ -33,7 +32,7 @@
   }
 }
 
-/*Dành cho màn hình cảm ứng(điện thoại)*/
+/* 4. TỐI ƯU CHO MÀN HÌNH CẢM ỨNG */
 @media (hover: none) {
   button {
     padding: 12px !important;
@@ -46,10 +45,9 @@
   }
 }
 
-/*Điều chỉnh cho chuẩn khi xoay ngang*/
+/* 5. CHẾ ĐỘ HIỂN THỊ GỌN KHI XOAY NGANG */
 @supports (orientation: landscape) {
   @media (orientation: landscape) and (max-height: 600px) {
-    /* Compact mode for small landscape screens */
     .landscape\:p-2 { padding: 0.5rem; }
     .landscape\:h-screen { height: 100vh; }
     .landscape\:overflow-auto { overflow: auto; }
@@ -70,15 +68,10 @@
   }
 }
 
-
-
+/* 6. HIỆU ỨNG XOAY LOGO */
 @keyframes logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
 }
 
 @media (prefers-reduced-motion: no-preference) {
@@ -87,6 +80,7 @@
   }
 }
 
+/* 7. CẤU HÌNH THẺ VÀ VĂN BẢN PHỤ */
 .card {
   padding: 2em;
 }
@@ -94,4 +88,3 @@
 .read-the-docs {
   color: #888;
 }
-/*Nói chung đoạn code này để tương thích các thiết bị với game*/

@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 const Instructions: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
 
+  /* DANH SÁCH LUẬT CHƠI */
   const rules = [
     {
       title: "👥 Mục đích trò chơi",
@@ -36,16 +37,18 @@ const Instructions: React.FC = () => {
 
   return (
     <div className="fixed bottom-4 sm:bottom-6 lg:bottom-8 right-4 sm:right-6 lg:right-8 z-40">
-      {/* Dropdown Menu */}
+      
+      {/* 1. KHUNG HIỂN THỊ HƯỚNG DẪN */}
       {isOpen && (
         <div className="absolute bottom-16 sm:bottom-20 right-0 w-80 sm:w-96 bg-white rounded-[20px] sm:rounded-[30px] shadow-2xl border-4 sm:border-6 border-amber-800 overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-300">
-          {/* Header */}
+          
+          {/* PHẦN ĐẦU TRANG */}
           <div className="bg-gradient-to-r from-amber-600 to-amber-800 p-4 sm:p-6 text-white">
             <h2 className="text-xl sm:text-2xl font-black">📖 CÁCH CHƠI</h2>
             <p className="text-xs sm:text-sm opacity-90 mt-1">Hướng dẫn chi tiết Ô Ăn Năn</p>
           </div>
 
-          {/* Content */}
+          {/* PHẦN NỘI DUNG CHÍNH */}
           <div className="max-h-[60vh] overflow-y-auto p-4 sm:p-6 space-y-4 sm:space-y-5 bg-gradient-to-b from-white to-amber-50">
             {rules.map((rule, idx) => (
               <div key={idx} className="border-l-4 border-amber-600 pl-3 sm:pl-4">
@@ -58,7 +61,7 @@ const Instructions: React.FC = () => {
               </div>
             ))}
 
-            {/* Tips */}
+            {/* MẸO CHIẾN THUẬT */}
             <div className="bg-yellow-100 border-2 border-yellow-400 rounded-lg p-3 sm:p-4 mt-4 sm:mt-5">
               <h3 className="font-black text-sm text-yellow-900 mb-2">💡 Mẹo chơi</h3>
               <ul className="text-xs sm:text-sm text-yellow-900 space-y-1">
@@ -69,16 +72,16 @@ const Instructions: React.FC = () => {
             </div>
           </div>
 
-          {/* Footer */}
+          {/* PHẦN CHÂN TRANG */}
           <div className="bg-amber-100 p-2 sm:p-3 text-center border-t border-amber-300">
             <p className="text-[10px] sm:text-xs font-black text-amber-900 uppercase">
-              Ô Ăn Năn - Lấy cảm hứng từ "Ô Ăn Quan" trò chơi truyền thống Việt Nam
+              Ô Ăn Năn - Lấy cảm hứng từ trò chơi truyền thống "Ô Ăn Quan".
             </p>
           </div>
         </div>
       )}
 
-      {/* FAB Button */}
+      {/* 2. NÚT BẤM ĐIỀU KHIỂN TRÒN */}
       <button
         onClick={() => setIsOpen(!isOpen)}
         className={`

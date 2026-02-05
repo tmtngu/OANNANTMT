@@ -1,6 +1,4 @@
-
-
-/*Xoá hết khoảng trắng của trình duyệt, ép toàn bộ game phải full màn hình*/
+/* 1. CÀI ĐẶT TRÀN MÀN HÌNH */
 html,
 body,
 #root {
@@ -9,7 +7,7 @@ body,
   padding: 0;
 }
 
-/*Định hình phong cách, kiểu chữ của game*/
+/* 2. MÀU NỀN VÀ KIỂU CHỮ */
 body {
   background: radial-gradient(circle at center, #1f2933, #020617);
   color: #e5e7eb;
@@ -20,22 +18,15 @@ body {
   overflow: hidden;
 }
 
-/*Chặn bôi đen văn bản*/
+/* 3. CHẶN COPPY CHỮ */
 * {
   user-select: none;
 }
 
-/*Hiệu ứng nút thu nhỏ khi nhấn vào*/
+/* 4. HIỆU ỨNG BẤM NÚT */
 .btn-press {
   transition: transform 0.08s ease, box-shadow 0.08s ease;
 }
 .btn-press:active {
   transform: scale(0.96);
 }
-/*
-Giao diện tối (Dark Mode) giúp bảo vệ mắt và trông hiện đại.
-
-Chống rối mắt bằng cách khóa cuộn và bôi đen.
-
-Tăng trải nghiệm qua các hiệu ứng nhấn nút mượt mà.
-*/
